@@ -1,5 +1,5 @@
 # Prismatic-SCARA
-![Prismatic SCARA](scara render 1.PNG)
+![Prismatic SCARA](scara_render_.PNG)
 
 ## Archivos Importantes
 
