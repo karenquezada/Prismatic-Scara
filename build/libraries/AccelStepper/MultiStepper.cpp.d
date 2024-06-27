@@ -1,4 +1,4 @@
-C:\Users\Karen\Desktop\SCARA\ prismatico\build\libraries\AccelStepper\MultiStepper.cpp.o: \
+C:\Users\Karen\Desktop\SCARA\ prismatico\Prismatic-Scara\build\libraries\AccelStepper\MultiStepper.cpp.o: \
  C:\Users\Karen\Documents\Arduino\libraries\AccelStepper\src\MultiStepper.cpp \
  C:\Users\Karen\Documents\Arduino\libraries\AccelStepper\src\MultiStepper.h \
  C:\Users\Karen\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \

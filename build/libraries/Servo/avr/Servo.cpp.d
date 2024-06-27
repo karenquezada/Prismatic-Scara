@@ -1,4 +1,4 @@
-C:\Users\Karen\Desktop\SCARA\ prismatico\build\libraries\Servo\avr\Servo.cpp.o: \
+C:\Users\Karen\Desktop\SCARA\ prismatico\Prismatic-Scara\build\libraries\Servo\avr\Servo.cpp.o: \
  C:\Users\Karen\Documents\Arduino\libraries\Servo\src\avr\Servo.cpp \
  C:\Users\Karen\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
  C:\Users\Karen\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/binary.h \
