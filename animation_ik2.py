@@ -39,7 +39,7 @@ def draw_lines(ax, q1, q2, q3):
     #Legend
     ax.legend()
 
-params = lista_de_posiciones([176.24, -39.18], [300, 39.18], 10)
+params = lista_de_posiciones([176.24, -39.18], [250, -50], 10)
 print("instrucciones", *params)
   
 #Update function for the animation

@@ -92,6 +92,6 @@ def lista_de_posiciones(pos1, pos2, n):
 # Comando para realizar homing
 sc.home()
 
-lista_de_posiciones([176.24, -39.18], [250, 39.18], 10)
+lista_de_posiciones([176.24, -39.18], [250, -50], 10)
 
 sc.close_serial()
