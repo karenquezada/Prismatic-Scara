@@ -1,39 +1,48 @@
 import serial
-from serial import Serial
 import time
 
 class SerialControl:
-
-    def __init__(self, port="/dev/ttyUSB0"):
+    def __init__(self, port):
         self.port = port
         self.serial = None
-        self.serial_port = ""
 
     def open_serial(self):
         try:
-            self.serial = Serial(self.port, 9600, timeout=1, write_timeout=0.2)
-            print("The port is available")
-            self.serial_port = "Open"
-            time.sleep(2)
-        except serial.serialutil.SerialException:
-            print("The port is at use")
-            self.serial.close()
-            self.serial.open()
-
+            self.serial = serial.Serial(self.port, 9600, timeout=1)
+            print(f"Port is available")
+        except Exception as e:
+            print(f"Failed to open port: {str(e)}")
 
     def close_serial(self):
-        time.sleep(0.2)
-        self.serial.close()
-        self.serial_port = "Close"
+        if self.serial and self.serial.is_open:
+            self.serial.close()
 
-    def envio_pos(self, diametro=0, x_pos=0, n_dientes=0):
-        mensaje = ",{},{},{}\n".format(diametro,x_pos,n_dientes)
-        print(mensaje)
-        self.serial.write(mensaje.encode())
-        print(self.serial.readline())
+    def send_command(self, command):
+        if self.serial and self.serial.is_open:
+            try:
+                self.serial.write(command.encode() + b'\n')
+                time.sleep(0.1)  # Espera breve para permitir que el Arduino procese el comando
+                self.read_response()
+            except Exception as e:
+                print(f"Error sending command: {str(e)}")
 
+    def read_response(self):
+        if self.serial and self.serial.is_open:
+            while self.serial.in_waiting > 0:
+                response = self.serial.readline().decode().strip()
+                print(f"Arduino Response: {response}")
 
-   
-    def stop(self):
-        self.serial.write('STOP\n'.encode())
-   
+    def home(self):
+        self.send_command("HOME")
+        while True:
+            response = self.read_response()
+            if response == "HOMING_COMPLETE":
+                break
+            time.sleep(0.1)  # Espera breve antes de revisar de nuevoef home(self):
+            self.send_command("HOME")
+
+    def send_angles(self, q1, q2, q3):
+        command = f"MOVE {q1},{q2},{q3}\n"
+        self.send_command(command)
+        while(self.read_response() != "Arduino Response: Movimiento terminado"):
+            time.sleep(0.1)
