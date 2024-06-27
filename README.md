@@ -1,4 +1,5 @@
-# Prismatic-Scara
+# Prismatic-SCARA
+![Prismatic SCARA](scara render 1.PNG)
 
 ## Archivos Importantes
 
