@@ -43,7 +43,6 @@ bool serialDataReceived = false;
 
 // Función para imprimir mensajes de depuración
 void debugPrint(String message) {
-  Serial.print("Arduino Response: ");
   Serial.println(message);
 }
 
@@ -96,8 +95,9 @@ void homingRoutine() {
         stepper3.runSpeed();
     }
     stepper3.setCurrentPosition(0); // Establecer posición actual como 0
-    stepper3.moveTo(-2 * stepsPerMmLinear);  // Mover el motor una pequeña distancia
+    stepper3.moveTo(-4 * stepsPerMmLinear);  // Mover el motor una pequeña distancia
     debugPrint("Rutina de home terminada :D");
+    inputString = "";
     Serial.println("HOMING_COMPLETE");
 }
 
@@ -126,34 +126,34 @@ void serialReading() {
         stepper3.moveTo(abs(round(q3 * stepsPerMmLinear)));            // Convertir mm a pasos y redondear
         
         // Limpiar la cadena
-        inputString = "";
         stringComplete = false;
+        inputString = "";
     }
 }
 void serialEvent() {
-    while (Serial.available()) {
-        // Obtener el nuevo byte
-        char inChar = (char)Serial.read();
-        // Añadir esto al inputString:
-        inputString += inChar;
-        // Si el carácter entrante es una nueva linea, establecer una bandera para que el ciclo principal pueda hacer algo al respecto
-        if (inChar == '\n') {
-            if (inputString.startsWith("HOME")) {
-                debugPrint("Received HOME command");
-                homingRoutine();
-                stringComplete = false;
-            }
-           
-            // Revisar si el comando es MOVE
-            else if (inputString.startsWith("MOVE")) {
-                debugPrint("Received MOVE command");
-                stringComplete = true;
-            else {
-              debugPrint("Instrucción no reconocida");
-            }
-            }
-        }
+    if (Serial.available()) {
+        inputString = Serial.readStringUntil('\n'); // Read until newline
+        inputString.trim(); // Remove any trailing whitespace
+        processInput(inputString);
     }
+}
+
+void processInput(String command) {
+    if (command.startsWith("HOME")) {
+        debugPrint("Received HOME command");
+        homingRoutine();
+        inputString = "";
+        stringComplete = false;
+    } else if (command.startsWith("MOVE")) {
+        debugPrint("Received MOVE command");
+        stringComplete = true;
+    } else {
+        Serial.print(command);
+        debugPrint("Command not recognized");
+        stringComplete = false;
+        inputString = "";
+    }
+     // Clear the input string for the next command
 }
 
 void setup() {
@@ -169,6 +169,7 @@ void setup() {
     digitalWrite(EN_PIN1, LOW);
     digitalWrite(EN_PIN2, LOW);
     digitalWrite(EN_PIN3, LOW);
+    inputString.reserve(200);
 
     // Configuración de la velocidad máxima y aceleración de los motores paso a paso
     //VELOCIDAD MAXIMA PARA LOS MOTORES: 396
@@ -182,28 +183,25 @@ void setup() {
     stepper3.setAcceleration(500);  // Aceleración ajustada
 
     // Inicializa la comunicación serial
-    Serial.begin(9600);
+    Serial.begin(115200);
     debugPrint("Arduino iniciado");
 }
 
 void loop() {
+  
+  while(!Serial.available()){}
     serialEvent();
+    processInput(inputString);
     serialReading();
 
-while(stepper1.distanceToGo() != 0||stepper2.distanceToGo() != 0||stepper3.distanceToGo() != 0) {
-    // Ejecutar movimientos de los motores paso a paso
+  while(stepper1.distanceToGo() != 0||stepper2.distanceToGo() != 0||stepper3.distanceToGo() != 0) {
+      // Ejecutar movimientos de los motores paso a paso
 
-    if (stepper1.distanceToGo() != 0) {
-        stepper1.run();
-    }
+      if (stepper1.distanceToGo() != 0) {stepper1.run();}
 
-    if (stepper2.distanceToGo() != 0) {
-        stepper2.run();
-    }
+      if (stepper2.distanceToGo() != 0) {stepper2.run();}
 
-    if (stepper3.distanceToGo() != 0) {
-        stepper3.run();
-    }
-}
-debugPrint("Movimiento terminado");
+      if (stepper3.distanceToGo() != 0) {stepper3.run();}
+  }
+  debugPrint("MOVEMENT_COMPLETE");
 }
